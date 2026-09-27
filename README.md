@@ -47,6 +47,6 @@ Adding your own tickets
 
 Step 1: Open a ticket. Choose a ticket from the queue and read the user's complaint.
 
-![image](https://github.com/user-attachments/assets/abc123...)
+![image](Screenshot 2026-09-27 113343.png)
 
 
