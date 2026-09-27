@@ -48,4 +48,11 @@ Adding your own tickets
 
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/b88c60efeaa93fec0455a0028383b87e2f7304f4/Screenshot%202026-09-27%20113343.png)
 
-I ran all three diagnostic tools (ipconfig, nslookup, icacls, 
+<h2> Ticket 1 </h2>
+
+Websites won't load, but pings to IPs work
+
+I used all three diagnostic tools (ipconfig, nslookup, icacls, 
+
+
+
