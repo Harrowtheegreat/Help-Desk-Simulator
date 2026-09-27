@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Help Desk Simulator: A+ Practice Tickets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6EBF0; --panel:#FFFFFF; --ink:#18222E; --muted:#5A6878; --line:#CBD4DE;
+  --accent:#F2B632; --accent-ink:#3A2A00; --ok:#2F7D5B; --ok-soft:#DDEFE5;
+  --bad:#B63A26; --bad-soft:#F7E1DC; --term-bg:#14202B; --term-fg:#CFE3D4; --term-dim:#7E97A8;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,"Courier New",monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111921; --panel:#19242F; --ink:#E4EAF0; --muted:#94A3B3; --line:#2C3A48;
+    --ok-soft:#1C3A2D; --bad-soft:#40211B; --term-bg:#0B131A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111921; --panel:#19242F; --ink:#E4EAF0; --muted:#94A3B3; --line:#2C3A48;
+  --ok-soft:#1C3A2D; --bad-soft:#40211B; --term-bg:#0B131A;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;padding:14px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{font-weight:700;font-size:1.1rem;margin:0}
+.brand small{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
+.stats{display:flex;gap:24px;margin-left:auto}
+.stat b{display:block;font-size:1.35rem;line-height:1.1}
+.stat span{font-size:.8rem;color:var(--muted)}
+.reset{background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:.85rem;color:var(--muted)}
+
+.layout{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 72px)}
+.queue{border-right:1px solid var(--line);background:var(--panel);overflow-y:auto}
+.queue h2{font-size:.95rem;margin:0;padding:16px 20px 8px;color:var(--muted);font-weight:600}
+.qitem{display:block;width:100%;text-align:left;background:none;border:0;border-left:5px solid transparent;border-bottom:1px solid var(--line);padding:14px 18px}
+.qitem:hover{background:color-mix(in srgb,var(--bg) 60%,transparent)}
+.qitem[aria-current="true"]{background:var(--bg)}
+.qitem.p-high{border-left-color:var(--bad)}
+.qitem.p-med{border-left-color:var(--accent)}
+.qitem.p-low{border-left-color:var(--line)}
+.qitem .qid{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.qitem .qsub{display:block;font-weight:600;margin:2px 0}
+.qitem .qmeta{font-size:.82rem;color:var(--muted)}
+.qitem.done .qsub{text-decoration:line-through;color:var(--muted)}
+.badge{display:inline-block;font-size:.75rem;font-weight:600;padding:1px 8px;border-radius:10px;margin-left:6px}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+
+.work{padding:28px clamp(16px,4vw,48px);max-width:960px;width:100%}
+.back{display:none;background:none;border:0;padding:0;margin-bottom:16px;color:var(--muted);text-decoration:underline}
+.thead .tid{font-family:var(--mono);color:var(--muted);font-size:.9rem}
+.thead h1{font-size:clamp(1.4rem,3vw,1.9rem);line-height:1.2;margin:4px 0 10px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;font-size:.85rem}
+.tag{border:1px solid var(--line);border-radius:4px;padding:2px 8px;color:var(--muted)}
+.tag.high{border-color:var(--bad);color:var(--bad)}
+.tag.med{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+
+.complaint{margin:22px 0;padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-radius:4px 16px 16px 16px;max-width:65ch}
+.complaint .who{font-weight:600;font-size:.9rem;margin-bottom:4px}
+.complaint p{margin:0}
+
+.steps{display:flex;list-style:none;padding:0;margin:0 0 22px;counter-reset:s;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}
+.steps li{flex:1;padding:10px 12px;font-size:.85rem;color:var(--muted);border-right:1px solid var(--line);counter-increment:s}
+.steps li:last-child{border-right:0}
+.steps li::before{content:counter(s) ". ";font-weight:700}
+.steps li.now{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.steps li.past{color:var(--ok)}
+
+.console{border-radius:8px;overflow:hidden;background:var(--term-bg);margin-bottom:22px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.tool{font-family:var(--mono);font-size:.82rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--term-fg);border-radius:4px;padding:6px 10px}
+.tool:hover{background:rgba(255,255,255,.12)}
+.tool.used{color:var(--term-dim)}
+.term{font-family:var(--mono);font-size:.85rem;color:var(--term-fg);padding:14px 16px;margin:0;min-height:160px;max-height:360px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.term .prompt{color:var(--accent)}
+.term .hint{color:var(--term-dim)}
+
+.stage h2{font-size:1.15rem;margin:0 0 4px}
+.stage > p{margin:0 0 14px;color:var(--muted);max-width:65ch}
+.choices{display:grid;gap:8px;max-width:720px}
+.choice{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.choice:hover:not(:disabled){border-color:var(--ink)}
+.choice.wrong{background:var(--bad-soft);border-color:var(--bad);cursor:not-allowed}
+.choice.wrong small{display:block;color:var(--bad);margin-top:4px}
+.primary{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:11px 18px;font-weight:600;margin-top:14px}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+textarea{width:100%;max-width:720px;min-height:130px;font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px}
+.help{font-size:.85rem;color:var(--muted)}
+
+.resolved{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--ok);border-radius:6px;padding:20px 22px;max-width:760px}
+.resolved h2{margin:0 0 6px;color:var(--ok)}
+.score{font-size:2.4rem;font-weight:700;line-height:1}
+.resolved h3{font-size:.95rem;margin:18px 0 4px}
+.resolved p{margin:0}
+.model{font-family:var(--mono);font-size:.85rem;background:var(--bg);padding:12px;border-radius:4px;white-space:pre-wrap}
+
+.empty{padding:60px 0;max-width:52ch}
+.empty h1{font-size:1.8rem;margin:0 0 10px}
+
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr}
+  .queue{border-right:0}
+  body.viewing .queue{display:none}
+  body:not(.viewing) .work{display:none}
+  .back{display:inline-block}
+  .steps{flex-wrap:wrap}
+  .steps li{flex:1 1 50%;border-bottom:1px solid var(--line)}
+  .stats{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:no-preference){
+  .choice,.qitem{transition:background-color .15s,border-color .15s}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <p class="brand">Help Desk Simulator<small>Practice tickets mapped to CompTIA A+</small></p>
+  <div class="stats">
+    <div class="stat"><b id="sOpen">0</b><span>Open</span></div>
+    <div class="stat"><b id="sDone">0</b><span>Resolved</span></div>
+    <div class="stat"><b id="sAvg">–</b><span>Avg score</span></div>
+  </div>
+  <button class="reset" id="resetBtn">Reset progress</button>
+</header>
+<div class="layout">
+  <nav class="queue" aria-label="Ticket queue"><h2>Ticket queue</h2><div id="queue"></div></nav>
+  <main class="work" id="work"></main>
+</div>
+
+<script>
+const TICKETS = [
+{
+  id:"INC-1001", subject:"Websites won't load but Teams works", user:"Dana Ruiz", dept:"Accounting", pri:"high",
+  domain:"Networking", obj:"Core 1, Domain 5: Troubleshoot network issues",
+  complaint:"Chrome says 'This site can't be reached' for everything. Weirdly, Teams calls still connect. I have a client deadline at noon!",
+  tools:[
+    {cmd:"ipconfig /all", out:"Ethernet adapter Ethernet:\n   IPv4 Address. . . . . : 192.168.10.44\n   Subnet Mask . . . . . : 255.255.255.0\n   Default Gateway . . . : 192.168.10.1\n   DHCP Enabled. . . . . : No\n   DNS Servers . . . . . : 10.0.0.254"},
+    {cmd:"ping 8.8.8.8", out:"Reply from 8.8.8.8: bytes=32 time=14ms TTL=117\nReply from 8.8.8.8: bytes=32 time=13ms TTL=117\nPackets: Sent = 4, Received = 4, Lost = 0 (0% loss)"},
+    {cmd:"ping google.com", out:"Ping request could not find host google.com. Please check the name and try again."},
+    {cmd:"nslookup google.com", out:"DNS request timed out.\n    timeout was 2 seconds.\nServer:  UnKnown\nAddress:  10.0.0.254\n\n*** Request to UnKnown timed-out"}
+  ],
+  causes:[
+    {t:"The DNS server setting points to an address that doesn't respond", ok:true},
+    {t:"The network cable is unplugged", ok:false, why:"Pinging 8.8.8.8 succeeds, so the physical connection is fine."},
+    {t:"The default gateway is wrong", ok:false, why:"If the gateway were wrong, pinging an outside IP like 8.8.8.8 would fail too."},
+    {t:"Chrome is corrupted", ok:false, why:"Name lookups fail from the command line too, so it isn't a browser problem."}
+  ],
+  fixes:[
+    {t:"Set the adapter's DNS back to automatic (or the company DNS server), then run ipconfig /flushdns", ok:true},
+    {t:"Reinstall Chrome", ok:false, why:"The browser was never the problem. nslookup failed on its own."},
+    {t:"Replace the network card", ok:false, why:"The NIC is passing traffic fine. Don't swap hardware for a configuration error."}
+  ],
+  model:"Symptom: no websites load; IP pings succeed.\nCause: manual DNS entry of 10.0.0.254 (unreachable).\nFix: set DNS to obtain automatically, ran ipconfig /flushdns.\nVerified: nslookup google.com resolves, sites load.\nUser informed. Checked with user how setting changed.",
+  lesson:"If you can ping an IP address but not a name, suspect DNS first. Teams kept working because active connections were already established."
+},
+{
+  id:"INC-1002", subject:"Print jobs stuck in the queue", user:"Marcus Lee", dept:"Front Office", pri:"med",
+  domain:"Hardware & printers", obj:"Core 1, Domain 5: Troubleshoot printers",
+  complaint:"I hit print on the patient forms and nothing comes out. The printer screen says Ready and it has paper.",
+  tools:[
+    {cmd:"Check printer panel", out:"Printer status: Ready\nToner: 62%\nPaper tray 1: Loaded\nNo error codes."},
+    {cmd:"Get-Printer", out:"Get-Printer : The spooler service is not reachable. Ensure the spooler service is running."},
+    {cmd:"sc query spooler", out:"SERVICE_NAME: spooler\n        TYPE               : 110  WIN32_OWN_PROCESS\n        STATE              : 1  STOPPED\n        WIN32_EXIT_CODE    : 0  (0x0)"},
+    {cmd:"ping printer IP", out:"Reply from 192.168.10.210: bytes=32 time<1ms TTL=64\nPackets: Sent = 4, Received = 4, Lost = 0 (0% loss)"}
+  ],
+  causes:[
+    {t:"The Print Spooler service on the PC is stopped", ok:true},
+    {t:"The printer is out of toner", ok:false, why:"The panel shows 62% toner and no errors."},
+    {t:"The printer is offline on the network", ok:false, why:"The printer answers pings, so it's reachable."},
+    {t:"The printer driver is the wrong model", ok:false, why:"The spooler error shows up before any driver is involved."}
+  ],
+  fixes:[
+    {t:"Start the Print Spooler service, set its startup type to Automatic, and send a test page", ok:true},
+    {t:"Delete and reinstall the printer driver", ok:false, why:"Driver reinstalls also need the spooler. Start with the service that's actually stopped."},
+    {t:"Power cycle the printer", ok:false, why:"The printer is healthy. The problem is on the PC."}
+  ],
+  model:"Symptom: jobs not printing, printer shows Ready.\nCause: Print Spooler service stopped on workstation.\nFix: started spooler via services.msc, set startup to Automatic.\nVerified: test page printed, queued forms printed.",
+  lesson:"When the printer looks fine, check the PC side: spooler service, queue, and connectivity."
+},
+{
+  id:"INC-1003", subject:"Password doesn't work anymore", user:"Priya Shah", dept:"Sales", pri:"high",
+  domain:"Security", obj:"Core 2, Domain 2: Security and account management",
+  complaint:"I'm typing my password right and it keeps saying it's wrong. Now it says my account is locked. Can you just reset it to something simple over the phone?",
+  tools:[
+    {cmd:"net user pshah /domain", out:"User name                    pshah\nAccount active               Locked\nPassword last set            9/2/2026 8:14 AM\nPassword expires             11/1/2026\nBad password count           5"},
+    {cmd:"Event Viewer: Security log", out:"Event ID 4740 - A user account was locked out.\n  Account Name: pshah\n  Caller Computer: SALES-LT07\n\nEvent ID 4625 (x5) - An account failed to log on.\n  Failure reason: Unknown user name or bad password."},
+    {cmd:"Ask user: Caps Lock on?", out:"User: \"Oh... the Caps Lock light is on. I didn't notice.\""}
+  ],
+  causes:[
+    {t:"Account locked after 5 bad attempts, likely from Caps Lock", ok:true},
+    {t:"The password expired", ok:false, why:"The password doesn't expire until November."},
+    {t:"The account was disabled by HR", ok:false, why:"The status reads Locked, not disabled, and the event log shows failed logons."}
+  ],
+  fixes:[
+    {t:"Verify the caller's identity per policy, then unlock the account and have her sign in with Caps Lock off", ok:true},
+    {t:"Reset her password to Welcome123 over the phone right away", ok:false, why:"Never skip identity verification, and never set weak passwords. This is how social engineering works."},
+    {t:"Create her a new account", ok:false, why:"Duplicate accounts are a security and licensing problem. Unlocking is enough."}
+  ],
+  model:"Symptom: user unable to sign in, account locked.\nCause: 5 failed attempts (Caps Lock on), event 4740.\nFix: verified identity via callback to number on file, unlocked account.\nVerified: user signed in successfully. No password reset needed.",
+  lesson:"Always verify identity before touching an account. A caller asking for a quick, simple reset is a classic social engineering red flag."
+},
+{
+  id:"INC-1004", subject:"Computer super slow and fan is loud", user:"Tom Becker", dept:"Warehouse", pri:"high",
+  domain:"Security & malware", obj:"Core 2, Domain 3: Malware removal steps",
+  complaint:"My PC has been crawling since yesterday. The fan sounds like a jet. I did download a free PDF converter to open a shipping form...",
+  tools:[
+    {cmd:"Task Manager: Processes", out:"Name              CPU     Memory\nsvch0st.exe       97.8%   412 MB\nChrome            1.1%    620 MB\nExplorer          0.3%    88 MB"},
+    {cmd:"Open file location: svch0st.exe", out:"C:\\Users\\tbecker\\AppData\\Roaming\\Updater\\svch0st.exe\nDigital signature: none"},
+    {cmd:"Task Manager: Startup", out:"Name            Publisher     Status\nsvch0st         (none)        Enabled\nOneDrive        Microsoft     Enabled"},
+    {cmd:"Microsoft Defender status", out:"Real-time protection: OFF\nLast scan: 41 days ago"}
+  ],
+  causes:[
+    {t:"Malware disguised as a Windows process (note the zero in svch0st)", ok:true},
+    {t:"Not enough RAM for Chrome", ok:false, why:"Chrome is barely using CPU. One unsigned process is eating 98%."},
+    {t:"The fan is failing", ok:false, why:"The fan is loud because the CPU is pinned, not the other way around."}
+  ],
+  fixes:[
+    {t:"Follow the malware removal steps: quarantine (disconnect from network), disable System Restore, remediate with updated scans, schedule scans, re-enable System Restore, educate the user", ok:true},
+    {t:"End the process in Task Manager and close the ticket", ok:false, why:"It's set to run at startup and will return. Ending a process isn't remediation."},
+    {t:"Leave it connected and run a quick scan", ok:false, why:"Quarantine first so it can't spread across the network."}
+  ],
+  model:"Symptom: high CPU, slowness after downloading freeware.\nCause: unsigned malware svch0st.exe in AppData, set to autostart; Defender disabled.\nFix: disconnected from network, disabled System Restore, removed with updated Defender + offline scan, re-enabled protection and restore, created new restore point.\nVerified: CPU normal. User educated on downloading software. Escalated to security team per policy.",
+  lesson:"Memorize the CompTIA malware removal order. It shows up on the Core 2 exam and in real incidents."
+},
+{
+  id:"INC-1005", subject:"Access denied on the Marketing share", user:"Jordan Kim", dept:"Marketing (new hire)", pri:"med",
+  domain:"Permissions", obj:"Core 2, Domain 1: Windows file sharing and permissions",
+  complaint:"It's my first week. Everyone on my team opens the \\\\files\\Marketing folder, but I get Access Denied.",
+  tools:[
+    {cmd:"whoami /groups", out:"GROUP INFORMATION\nCORP\\Domain Users\nCORP\\All-Staff\nBUILTIN\\Users"},
+    {cmd:"icacls \\\\files\\Marketing", out:"\\\\files\\Marketing CORP\\Marketing-RW:(OI)(CI)(M)\n                   CORP\\IT-Admins:(OI)(CI)(F)\n                   BUILTIN\\Administrators:(OI)(CI)(F)"},
+    {cmd:"Test access from teammate PC", out:"Teammate (CORP\\Marketing-RW member): folder opens normally."}
+  ],
+  causes:[
+    {t:"Jordan isn't a member of the Marketing-RW group that has permissions", ok:true},
+    {t:"The file server is down", ok:false, why:"A teammate opens the share fine right now."},
+    {t:"Jordan's PC needs a new network card", ok:false, why:"'Access denied' means the server answered and refused. That's a permissions problem."}
+  ],
+  fixes:[
+    {t:"After manager approval, add Jordan to Marketing-RW, then have Jordan sign out and back in", ok:true},
+    {t:"Give Everyone Full Control on the share", ok:false, why:"That breaks least privilege and exposes the data to the whole company."},
+    {t:"Add Jordan directly to the folder's permissions list", ok:false, why:"It works, but it's messy. Use groups so access is easy to audit and remove."}
+  ],
+  model:"Symptom: Access Denied to \\\\files\\Marketing.\nCause: user not in CORP\\Marketing-RW.\nFix: manager approved; added user to group. User signed out/in to refresh token.\nVerified: share opens, can create files.",
+  lesson:"Group changes don't apply until the user signs out and back in. And always get approval before granting access."
+},
+{
+  id:"INC-1006", subject:"PC says no bootable device", user:"Lena Ortiz", dept:"HR", pri:"high",
+  domain:"Hardware", obj:"Core 1, Domain 5: Troubleshoot storage and boot issues",
+  complaint:"My computer was fine Friday. This morning it shows a black screen: 'No bootable device found. Press any key to reboot.'",
+  tools:[
+    {cmd:"Look at the PC's ports", out:"Front USB port: a USB flash drive labeled 'Benefits 2026' is plugged in."},
+    {cmd:"BIOS/UEFI: Boot order", out:"Boot Priority:\n  1. USB Storage Device\n  2. Windows Boot Manager (Samsung SSD 512GB)\n  3. Network PXE"},
+    {cmd:"BIOS/UEFI: Storage info", out:"SATA Port 0: Samsung SSD 512GB   Detected\nSMART status: OK"}
+  ],
+  causes:[
+    {t:"The PC is trying to boot from the non-bootable USB drive first", ok:true},
+    {t:"The SSD has failed", ok:false, why:"BIOS detects the SSD and SMART says OK."},
+    {t:"Windows is corrupted", ok:false, why:"The PC never gets as far as Windows. Check what it's booting from first."}
+  ],
+  fixes:[
+    {t:"Remove the USB drive and set Windows Boot Manager as first boot device", ok:true},
+    {t:"Replace the SSD", ok:false, why:"The drive is healthy. That's an expensive fix for a flash drive."},
+    {t:"Reinstall Windows", ok:false, why:"Nothing is wrong with Windows. You'd wipe her files for nothing."}
+  ],
+  model:"Symptom: 'No bootable device' at startup.\nCause: USB flash drive attached; USB first in boot order.\nFix: removed USB, moved Windows Boot Manager to first priority.\nVerified: PC boots to Windows normally. Advised user.",
+  lesson:"Check the simple, physical stuff first. The CompTIA method says question the obvious."
+},
+{
+  id:"INC-1007", subject:"Blue screen after last night's update", user:"Sam Patel", dept:"Design", pri:"med",
+  domain:"Operating systems", obj:"Core 2, Domain 3: Troubleshoot Windows OS",
+  complaint:"Since yesterday my PC blue-screens about 10 minutes after login, usually when I open Photoshop.",
+  tools:[
+    {cmd:"Reliability Monitor", out:"9/23/2026  Windows Update: Display driver 31.0.101 installed - Successful\n9/23/2026  Windows stopped working (x3)\n9/24/2026  Windows stopped working (x2)"},
+    {cmd:"BSOD details (minidump)", out:"Stop code: VIDEO_TDR_FAILURE\nFailed module: igdkmd64.sys (Intel graphics driver)"},
+    {cmd:"sfc /scannow", out:"Windows Resource Protection did not find any integrity violations."}
+  ],
+  causes:[
+    {t:"The new display driver is crashing", ok:true},
+    {t:"System files are corrupted", ok:false, why:"sfc found no integrity violations."},
+    {t:"Photoshop needs to be reinstalled", ok:false, why:"The stop code points at the graphics driver, and crashes began right after its update."}
+  ],
+  fixes:[
+    {t:"Roll back the display driver in Device Manager (use Safe Mode if needed), then pause that driver update", ok:true},
+    {t:"Reset Windows", ok:false, why:"That's the last resort. A driver rollback targets the actual cause."},
+    {t:"Replace the graphics card", ok:false, why:"The hardware worked fine before the update. Roll back first."}
+  ],
+  model:"Symptom: recurring BSOD VIDEO_TDR_FAILURE.\nCause: display driver update installed 9/23.\nFix: rolled back driver via Device Manager, paused update.\nVerified: 30 min Photoshop use, no crash. Reported driver to IT for review.",
+  lesson:"Ask 'what changed?' A crash that starts right after an update usually points straight at the update."
+},
+{
+  id:"INC-1008", subject:"Laptop can't get on the network", user:"Chris Wong", dept:"Legal", pri:"low",
+  domain:"Networking", obj:"Core 1, Domain 5: Troubleshoot network connectivity",
+  complaint:"I moved to a different desk this morning and now my laptop says 'Unidentified network, no internet.'",
+  tools:[
+    {cmd:"ipconfig", out:"Ethernet adapter Ethernet:\n   Autoconfiguration IPv4 Address. : 169.254.88.12\n   Subnet Mask . . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . . :"},
+    {cmd:"Check link lights", out:"Laptop port: link light ON (green).\nWall jack label: 3B-14"},
+    {cmd:"Check switch port 3B-14", out:"Port 3B-14: VLAN 999 (unused/parking VLAN)\nAll other desks in area: VLAN 20 (Staff)"}
+  ],
+  causes:[
+    {t:"The wall jack's switch port is on an unused VLAN with no DHCP, so Windows assigned an APIPA address", ok:true},
+    {t:"The cable is unplugged", ok:false, why:"The link light is on, so the physical connection is live."},
+    {t:"Windows needs updates", ok:false, why:"A 169.254 address means no DHCP response. That's a network-side issue."}
+  ],
+  fixes:[
+    {t:"Have the network team move port 3B-14 to the Staff VLAN, then run ipconfig /release and /renew", ok:true},
+    {t:"Give the laptop a static IP", ok:false, why:"On a parking VLAN that still goes nowhere, and static IPs create conflicts."},
+    {t:"Reimage the laptop", ok:false, why:"The laptop is fine. It worked at the old desk."}
+  ],
+  model:"Symptom: 'Unidentified network' at new desk.\nCause: jack 3B-14 on VLAN 999, no DHCP; laptop got APIPA 169.254.x.x.\nFix: escalated to network team; port moved to VLAN 20. Released/renewed IP.\nVerified: laptop got 192.168.20.x, internet works.",
+  lesson:"169.254.x.x means the PC asked for an address and nobody answered. Knowing when to escalate is a real help desk skill."
+}
+];
+
+const KEY = "hd-sim-v1";
+const STEPS = ["Investigate","Identify cause","Apply fix","Document & close"];
+let state = {};
+let current = null;
+
+function load(){ try{ state = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ state = {}; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function st(id){
+  if(!state[id]) state[id] = {stage:0, ran:[], wrongC:[], wrongF:[], notes:"", done:false, score:null};
+  return state[id];
+}
+function el(tag, attrs={}, ...kids){
+  const n = document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs)){
+    if(v==null) continue;
+    if(k==="class") n.className=v;
+    else if(k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k,v);
+  }
+  kids.flat().forEach(k => { if(k!=null) n.append(k.nodeType ? k : document.createTextNode(k)); });
+  return n;
+}
+const priLabel = p => ({high:"High",med:"Medium",low:"Low"})[p];
+
+function renderStats(){
+  const done = TICKETS.filter(t => state[t.id]?.done);
+  document.getElementById("sOpen").textContent = TICKETS.length - done.length;
+  document.getElementById("sDone").textContent = done.length;
+  document.getElementById("sAvg").textContent = done.length ? Math.round(done.reduce((a,t)=>a+state[t.id].score,0)/done.length) : "–";
+}
+
+function renderQueue(){
+  const q = document.getElementById("queue");
+  q.replaceChildren();
+  const order = {high:0, med:1, low:2};
+  [...TICKETS].sort((a,b)=> (state[a.id]?.done?1:0)-(state[b.id]?.done?1:0) || order[a.pri]-order[b.pri]).forEach(t => {
+    const s = state[t.id];
+    q.append(el("button", {
+      class:`qitem p-${t.pri}${s?.done?" done":""}`,
+      "aria-current": current===t.id ? "true":"false",
+      onclick:()=>open(t.id)
+    },
+      el("span",{class:"qid"}, t.id),
+      s?.done ? el("span",{class:"badge ok"}, `Resolved ${s.score}`) : null,
+      el("span",{class:"qsub"}, t.subject),
+      el("span",{class:"qmeta"}, `${t.user}, ${t.dept}. ${priLabel(t.pri)} priority`)
+    ));
+  });
+  renderStats();
+}
+
+function open(id){
+  current = id;
+  document.body.classList.add("viewing");
+  renderQueue();
+  renderTicket();
+  window.scrollTo({top:0});
+}
+
+function termContent(t, s){
+  const pre = el("pre",{class:"term","aria-live":"polite"});
+  if(!s.ran.length){
+    pre.append(el("span",{class:"hint"},"Run a tool above to start investigating. Real techs gather facts before guessing."));
+  }
+  s.ran.forEach(i => {
+    pre.append(el("span",{class:"prompt"}, `> ${t.tools[i].cmd}\n`), t.tools[i].out + "\n\n");
+  });
+  return pre;
+}
+
+function renderTicket(){
+  const w = document.getElementById("work");
+  w.replaceChildren();
+  const t = TICKETS.find(x=>x.id===current);
+  if(!t){
+    w.append(el("div",{class:"empty"},
+      el("h1",{},"Pick a ticket from the queue"),
+      el("p",{},"Each ticket is a real-world help desk problem tied to an A+ exam objective. Investigate with tools, find the cause, apply the right fix, and write a resolution note like you would on the job."),
+      el("p",{class:"help"},"Scoring: you start at 100. Each wrong cause or fix costs 15 points. Resolution notes that are too thin can't be submitted.")
+    ));
+    return;
+  }
+  const s = st(t.id);
+
+  w.append(el("button",{class:"back", onclick:()=>{document.body.classList.remove("viewing"); current=null; renderQueue(); renderTicket();}},"Back to queue"));
+  w.append(el("div",{class:"thead"},
+    el("span",{class:"tid"}, t.id),
+    el("h1",{}, t.subject),
+    el("div",{class:"tags"},
+      el("span",{class:`tag ${t.pri}`}, `${priLabel(t.pri)} priority`),
+      el("span",{class:"tag"}, t.domain),
+      el("span",{class:"tag"}, t.obj))
+  ));
+  w.append(el("div",{class:"complaint"},
+    el("div",{class:"who"}, `${t.user}, ${t.dept}`),
+    el("p",{}, t.complaint)));
+
+  const ol = el("ol",{class:"steps","aria-label":"Troubleshooting progress"});
+  STEPS.forEach((name,i)=> ol.append(el("li",{class: s.done||i<s.stage ? "past" : i===s.stage ? "now" : ""}, name)));
+  w.append(ol);
+
+  const tools = el("div",{class:"tools"});
+  t.tools.forEach((tool,i)=> tools.append(el("button",{
+    class:`tool${s.ran.includes(i)?" used":""}`,
+    onclick:()=>{ if(!s.ran.includes(i)){ s.ran.push(i); save(); renderTicket(); const term=document.querySelector(".term"); term.scrollTop=term.scrollHeight; } }
+  }, tool.cmd)));
+  w.append(el("div",{class:"console"}, tools, termContent(t,s)));
+
+  const stage = el("section",{class:"stage"});
+  if(s.done){
+    stage.append(el("div",{class:"resolved"},
+      el("h2",{},"Ticket resolved"),
+      el("div",{class:"score"}, `${s.score}`),
+      el("p",{class:"help"}, `${s.wrongC.length + s.wrongF.length} wrong guess(es). ${s.ran.length} of ${t.tools.length} tools used.`),
+      el("h3",{},"Your resolution note"),
+      el("div",{class:"model"}, s.notes),
+      el("h3",{},"Example note from a senior tech"),
+      el("div",{class:"model"}, t.model),
+      el("h3",{},"A+ takeaway"),
+      el("p",{}, t.lesson)
+    ));
+  } else if(s.stage===0){
+    stage.append(el("h2",{},"Step 1: Investigate"),
+      el("p",{},"Run at least two tools to gather evidence, then move on."),
+      el("button",{class:"primary", disabled: s.ran.length<2 ? "" : null, onclick:()=>{s.stage=1; save(); renderTicket();}}, "Identify the cause"));
+    if(s.ran.length>=2) stage.querySelector(".primary").removeAttribute("disabled");
+  } else if(s.stage===1 || s.stage===2){
+    const isCause = s.stage===1;
+    const list = isCause ? t.causes : t.fixes;
+    const wrong = isCause ? s.wrongC : s.wrongF;
+    stage.append(el("h2",{}, isCause ? "Step 2: What's the root cause?" : "Step 3: Choose the best fix"),
+      el("p",{}, isCause ? "Base your answer on what the tools showed. You can keep running tools." : "Pick the fix a careful tech would apply. Fast isn't always right."));
+    const box = el("div",{class:"choices"});
+    list.forEach((c,i)=>{
+      const isWrong = wrong.includes(i);
+      box.append(el("button",{
+        class:`choice${isWrong?" wrong":""}`,
+        disabled: isWrong ? "" : null,
+        onclick:()=>{
+          if(c.ok){ s.stage++; } else { wrong.push(i); }
+          save(); renderTicket();
+        }
+      }, c.t, isWrong ? el("small",{}, c.why) : null));
+      if(!isWrong) box.lastChild.removeAttribute("disabled");
+    });
+    stage.append(box);
+  } else if(s.stage===3){
+    const ta = el("textarea",{id:"notes","aria-describedby":"noteHelp", placeholder:"Symptom:\nCause:\nFix:\nVerified:"});
+    ta.value = s.notes || "";
+    const btn = el("button",{class:"primary", onclick:()=>{
+      s.notes = ta.value.trim();
+      s.done = true;
+      s.score = Math.max(40, 100 - 15*(s.wrongC.length + s.wrongF.length));
+      save(); renderQueue(); renderTicket();
+    }}, "Close ticket");
+    const check = ()=>{ s.notes = ta.value; save(); btn.disabled = ta.value.trim().length < 40; };
+    ta.addEventListener("input", check);
+    stage.append(el("h2",{},"Step 4: Document and close"),
+      el("p",{},"Write the note the next tech will read. Include the symptom, the cause, what you did, and how you verified it works."),
+      ta, el("p",{class:"help", id:"noteHelp"},"At least 40 characters. Good notes are how help desk techs get noticed."), btn);
+    check();
+  }
+  w.append(stage);
+}
+
+const resetBtn = document.getElementById("resetBtn");
+let resetArmed = false, resetTimer = null;
+resetBtn.addEventListener("click", ()=>{
+  if(!resetArmed){
+    resetArmed = true;
+    resetBtn.textContent = "Click again to reset";
+    resetBtn.style.borderColor = "var(--bad)";
+    resetBtn.style.color = "var(--bad)";
+    resetTimer = setTimeout(disarm, 4000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  disarm();
+  state = {};
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  current = null;
+  document.body.classList.remove("viewing");
+  renderQueue(); renderTicket();
+  resetBtn.textContent = "Progress cleared";
+  setTimeout(()=>{ if(!resetArmed) resetBtn.textContent = "Reset progress"; }, 2000);
+});
+function disarm(){
+  resetArmed = false;
+  resetBtn.textContent = "Reset progress";
+  resetBtn.style.borderColor = "";
+  resetBtn.style.color = "";
+}
+
+load(); renderQueue(); renderTicket();
+</script>
+</body>
+</html>
