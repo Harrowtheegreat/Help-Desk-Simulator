@@ -8,10 +8,10 @@ Instead of memorizing answers, you have to gather evidence, reason through it, a
 
 Each ticket follows four steps:
 
-1. Investigate. Run diagnostic tools (ipconfig, nslookup, icacls, Event Viewer, Task Manager, BIOS settings) and read realistic output.
-2. Identify the cause. Pick the root cause based on the evidence.
-3. Apply the fix. Choose the fix a careful technician would use. Some tempting shortcuts break security policy.
-4. Document and close. Write a resolution note, then compare it with an example note from a senior tech.
+1. Investigate. 
+2. Identify the cause.
+3. Apply the fix.
+4. Document and close.
 
 Wrong answers cost 15 points each and explain why they're wrong, so every mistake teaches something.
 
@@ -48,4 +48,4 @@ Adding your own tickets
 
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/b88c60efeaa93fec0455a0028383b87e2f7304f4/Screenshot%202026-09-27%20113343.png)
 
-
+I ran all three diagnostic tools (ipconfig, nslookup, icacls, 
