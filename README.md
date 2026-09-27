@@ -43,9 +43,8 @@ Progress saves in your browser automatically. To start over, click Reset progres
 
 Adding your own tickets
 
-▶ Try the live demo
 
-Step 1: Open a ticket. Choose a ticket from the queue and read the user's complaint.
+<h2> Network troubleshooting (DNS)</h2>
 
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/b88c60efeaa93fec0455a0028383b87e2f7304f4/Screenshot%202026-09-27%20113343.png)
 
