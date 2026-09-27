@@ -1,2 +1,53 @@
 # Help-Desk-Simulator
 realistic IT tickets: investigate with real commands, find the root cause, apply the fix, and document the resolution.
+
+About the project
+
+I built this project to practice the day-to-day work of a Tier 1 help desk technician
+Instead of memorizing answers, you have to gather evidence, reason through it, and document your work the way you would on the job.
+
+Each ticket follows four steps:
+
+1. Investigate. Run diagnostic tools (ipconfig, nslookup, icacls, Event Viewer, Task Manager, BIOS settings) and read realistic output.
+2. Identify the cause. Pick the root cause based on the evidence.
+3. Apply the fix. Choose the fix a careful technician would use. Some tempting shortcuts break security policy.
+4. Document and close. Write a resolution note, then compare it with an example note from a senior tech.
+
+Wrong answers cost 15 points each and explain why they're wrong, so every mistake teaches something.
+
+Ticket scenarios
+Ticket	Scenario	A+ domain
+INC-1001	Websites won't load, but pings to IPs work	Core 1: Network troubleshooting (DNS)
+INC-1002	Print jobs stuck while printer shows Ready	Core 1: Printer troubleshooting
+INC-1003	Locked-out user asks for a quick password reset	Core 2: Security and social engineering
+INC-1004	Slow PC after downloading freeware	Core 2: Malware removal steps
+INC-1005	New hire gets Access Denied on a file share	Core 2: NTFS/share permissions
+INC-1006	"No bootable device" on startup	Core 1: Boot and storage troubleshooting
+INC-1007	Blue screens after a driver update	Core 2: Windows OS troubleshooting
+INC-1008	APIPA address after moving desks	Core 1: Network connectivity and VLANs
+Skills demonstrated
+Using the CompTIA A+ troubleshooting methodology
+Diagnosing network problems (DNS, DHCP/APIPA, VLANs)
+Managing Windows services, drivers, and boot settings
+Following security practices: identity verification, least privilege, and the malware removal process
+Writing clear ticket documentation and knowing when to escalate
+Front-end development in HTML, CSS, and JavaScript
+How to run it
+
+No installation needed.
+
+Online: open the live demo.
+Locally: download index.html and open it in any modern browser.
+
+Progress saves in your browser automatically. To start over, click Reset progress twice.
+
+Adding your own tickets
+
+▶ Try the live demo
+
+
+
+
+
+
+
