@@ -46,7 +46,7 @@ Adding your own tickets
 ▶ Try the live demo
 
 
-
+!(image alt) https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/0c905780cefbff407bcb883dc313f3675f48caad/Screenshot%202026-09-27%20113343.png )
 
 
 
