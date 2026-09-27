@@ -47,6 +47,6 @@ Adding your own tickets
 
 Step 1: Open a ticket. Choose a ticket from the queue and read the user's complaint.
 
-![image](Screenshot 2026-09-27 113343.png)
+![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/b88c60efeaa93fec0455a0028383b87e2f7304f4/Screenshot%202026-09-27%20113343.png)
 
 
