@@ -59,8 +59,8 @@ to identify the issue.
 
 
 
-
-
+The DNS server setting points to the address that doesn't respond 
+![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/1ab48baa3f891df4174c1b3d77d550aeb9cc2bc9/Screenshot%202026-09-27%20114206.png)
 
 
 
