@@ -52,8 +52,8 @@ Adding your own tickets
 
 Websites won't load, but pings to IPs work
 
-I used all three diagnostic tools (ipconfig, nslookup, icacls, 
-to identify the issue.
+I used all three diagnostic tools (ipconfig, nslookup, icacls, which are commands that you can use  
+to identify network issues.
 
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/23655a2f4d656ef14f5ae99dc7b6c28aab265306/Screenshot%202026-09-27%20113908.png)
 
