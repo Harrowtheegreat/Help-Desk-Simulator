@@ -60,6 +60,8 @@ to identify network issues.
 
 
 The DNS server setting points to the address that doesn't respond 
+
+this  means your computer is set to ask a specific server to translate website names (like google.com) into IP addresses, but that server isn't answering. So the computer can't find websites by name, even though the network connection itself may be fine.
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/1ab48baa3f891df4174c1b3d77d550aeb9cc2bc9/Screenshot%202026-09-27%20114206.png)
 
 
