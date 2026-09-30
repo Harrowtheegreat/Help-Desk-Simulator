@@ -65,5 +65,7 @@ this  means your computer is set to ask a specific server to translate website n
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/1ab48baa3f891df4174c1b3d77d550aeb9cc2bc9/Screenshot%202026-09-27%20114206.png)
 
 
-
+Now its  time to apply the FIX
+Now by Setting DNS back to automatic lets DHCP hand out the correct company DNS server, and flushing clears out any bad cached lookups.
+![image](https://githbyub.com/Harrowtheegreat/Help-Desk-Simulator/blob/856a32295da7592d383c042ef88648831202a326/Screenshot%202026-09-27%20115832.png)
 
