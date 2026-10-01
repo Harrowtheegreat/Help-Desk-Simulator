@@ -69,3 +69,15 @@ Now its  time to apply the FIX
 Now by Setting DNS back to automatic lets DHCP hand out the correct company DNS server, and flushing clears out any bad cached lookups.
 
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/a84a05a6d7d7dfdbdec75cfb3520f8d6324329be/Screenshot%202026-09-27%20114354.png)
+
+Now in true helpdesk fashion we document our tickets then close them  
+Documenting help desk tickets matters because it:
+
+Saves time: If the same issue comes up again, the fix is already written down.
+Keeps everyone informed: Anyone on the team can pick up a ticket and see what's been tried.
+Shows patterns: Recurring problems become visible so root causes can be fixed.
+Provides accountability: There's a clear record of who did what and when.
+Builds a knowledge base: Past tickets become guides for training and self-service.
+Improves the customer experience: Users don't have to repeat themselves.
+
+![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/cafaacd17d1fd6cac4d8841080a5b565c873c58c/Screenshot%202026-09-27%20115832.png)
