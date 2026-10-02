@@ -68,6 +68,12 @@ this  means your computer is set to ask a specific server to translate website n
 Now its  time to apply the FIX
 Now by Setting DNS back to automatic lets DHCP hand out the correct company DNS server, and flushing clears out any bad cached lookups.
 
+Setting DNS to automatic lets DHCP assign the company's correct DNS server. A wrong manually set DNS can block access to internal sites, shared drives, and company resources. Automatic settings also stay up to date if the network changes.
+
+Flushing the DNS cache clears out old or incorrect saved lookups. Without it, the computer may keep using bad addresses even after the settings are fixed.
+
+Together, these steps make sure the computer finds the right servers and the fix takes effect immediately.
+
 ![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/a84a05a6d7d7dfdbdec75cfb3520f8d6324329be/Screenshot%202026-09-27%20114354.png)
 
 Now in true helpdesk fashion we document our tickets then close them  
