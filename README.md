@@ -79,6 +79,13 @@ Together, these steps make sure the computer finds the right servers and the fix
 Now in true helpdesk fashion we document our tickets then close them  
 Documenting help desk tickets matters because it:
 
+
+![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/cafaacd17d1fd6cac4d8841080a5b565c873c58c/Screenshot%202026-09-27%20115832.png)
+
+
+Documenting help desk tickets 
+
+
 Saves time: If the same issue comes up again, the fix is already written down.
 Keeps everyone informed: Anyone on the team can pick up a ticket and see what's been tried.
 Shows patterns: Recurring problems become visible so root causes can be fixed.
@@ -86,4 +93,5 @@ Provides accountability: There's a clear record of who did what and when.
 Builds a knowledge base: Past tickets become guides for training and self-service.
 Improves the customer experience: Users don't have to repeat themselves.
 
-![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/cafaacd17d1fd6cac4d8841080a5b565c873c58c/Screenshot%202026-09-27%20115832.png)
+![image](https://github.com/Harrowtheegreat/Help-Desk-Simulator/blob/0fe853daac829685f53e61fc037f3cb617ca3404/Screenshot%202026-09-27%20120239.png)
+
